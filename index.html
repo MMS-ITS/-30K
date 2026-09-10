@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>$30,000 Decision — Audit &amp; Rebuild of the One-Property Rental Model</title>
+<style>
+:root{
+  --ink:#101828; --ink2:#475467; --ink3:#667085; --line:#e4e7ec; --bg:#f6f7f9;
+  --brand:#4338ca; --teal:#0e7490; --green:#047857; --amber:#b45309; --red:#b42318;
+  --shadow:0 1px 3px rgba(16,24,40,.07),0 1px 2px rgba(16,24,40,.04);
+}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+     color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 70px}
+header{background:linear-gradient(120deg,#312e81,#4338ca 45%,#7c3aed);color:#fff;padding:32px 0 28px;margin-bottom:24px}
+header .wrap{padding-bottom:0}
+h1{margin:0 0 6px;font-size:26px;letter-spacing:-.4px}
+.sub{opacity:.9;font-size:14px;max-width:820px}
+.chips{margin-top:15px;display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.28);padding:4px 11px;border-radius:20px;font-size:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:22px;margin-bottom:20px}
+.card>h2{margin:0 0 4px;font-size:19px;letter-spacing:-.2px;display:flex;align-items:center;gap:9px}
+.card>.hint{color:var(--ink3);font-size:13px;margin:0 0 17px}
+.bar{width:5px;height:20px;border-radius:3px;background:var(--brand);display:inline-block;flex:none}
+.bar.t{background:var(--teal)}.bar.g{background:var(--green)}.bar.a{background:var(--amber)}.bar.r{background:var(--red)}
+.grid{display:grid;gap:20px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+fieldset{border:0;padding:0;margin:0 0 18px}
+legend{font-size:11px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--brand);
+  padding:0 0 8px;border-bottom:1px solid var(--line);width:100%;margin-bottom:12px}
+.f{display:grid;grid-template-columns:1fr 116px;gap:9px;align-items:center;margin-bottom:9px}
+.f label{font-size:13px;color:var(--ink2)}
+.f label small{display:block;color:var(--ink3);font-size:11.5px;line-height:1.35}
+input[type=number],select{width:100%;padding:7px 9px;border:1px solid #d0d5dd;border-radius:7px;font:inherit;
+  font-size:13.5px;text-align:right;background:#fff;color:var(--ink)}
+select{text-align:left}
+input:focus,select:focus{outline:2px solid #c7d2fe;border-color:var(--brand)}
+.flag{border-color:var(--amber)!important;background:#fffbeb!important}
+.src{border-color:#86efac!important;background:#f0fdf4!important}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:13px 14px;background:linear-gradient(180deg,#fff,#fafafa)}
+.kpi .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);font-weight:600}
+.kpi .v{font-size:20px;font-weight:700;margin-top:4px;letter-spacing:-.5px}
+.kpi .n{font-size:11.5px;color:var(--ink3);margin-top:3px}
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--brand)}.warn{color:var(--amber)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+thead th{background:#f9fafb;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);font-weight:700}
+tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:0;background:#f9fafb}
+td.lbl small{display:block;color:var(--ink3);font-size:11.5px;font-weight:400}
+.win{background:#ecfdf5!important}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:11px}
+.b-win{background:#d1fae5;color:#065f46}.b-ok{background:#dbeafe;color:#1e40af}
+.b-no{background:#fee2e2;color:#991b1b}.b-mid{background:#fef3c7;color:#92400e}
+.note{border-left:4px solid var(--brand);background:#eef2ff;padding:12px 15px;border-radius:0 8px 8px 0;margin:13px 0;font-size:13.5px}
+.note.w{border-color:var(--amber);background:#fffbeb}
+.note.d{border-color:var(--red);background:#fef2f2}
+.note.g{border-color:var(--green);background:#ecfdf5}
+.note b{display:block;margin-bottom:3px}
+ol.iss{padding-left:0;list-style:none;counter-reset:x;margin:0}
+ol.iss li{counter-increment:x;position:relative;padding:12px 0 12px 40px;border-bottom:1px solid var(--line)}
+ol.iss li:last-child{border-bottom:0}
+ol.iss li::before{content:counter(x);position:absolute;left:0;top:11px;width:26px;height:26px;border-radius:50%;
+  background:var(--red);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+ol.iss li.ok::before{background:var(--green);content:"✓"}
+ol.iss li.mid::before{background:var(--amber)}
+ol.iss li.wd::before{background:var(--ink3);content:"–"}
+ol.iss .t{font-weight:650;margin-bottom:3px;font-size:14px}
+ol.iss .d{color:var(--ink2);font-size:13px}
+code{background:#f2f4f7;padding:1px 5px;border-radius:4px;font:12.5px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+.verdict{background:linear-gradient(135deg,#064e3b,#065f46 55%,#0f766e);color:#fff;border:0}
+.verdict h2{color:#fff}.verdict .hint{color:rgba(255,255,255,.75)}
+.verdict .box{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:15px;margin-bottom:11px}
+.verdict .box b{display:block;font-size:15px;margin-bottom:5px}
+.verdict .box p{margin:0;font-size:13.5px;opacity:.94}
+footer{color:var(--ink3);font-size:12px;border-top:1px solid var(--line);padding-top:17px;margin-top:8px}
+.tools{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:19px}
+button{font:inherit;font-size:13px;font-weight:600;padding:8px 15px;border-radius:8px;border:1px solid #d0d5dd;
+  background:#fff;color:var(--ink);cursor:pointer}
+button.p{background:var(--brand);border-color:var(--brand);color:#fff}
+button:hover{filter:brightness(.97)}
+.lg{font-size:26px;font-weight:700;letter-spacing:-.6px}
+@media print{
+  @page{size:A4 portrait;margin:12mm 11mm}
+  body{background:#fff;font-size:9.8pt}
+  .wrap{max-width:none;padding:0}
+  header{background:#312e81!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:13px 0;margin-bottom:11px}
+  .card,.kpi,thead th,.note,.verdict,.badge,.flag,.src,tfoot td,.win{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card{box-shadow:none;break-inside:avoid;page-break-inside:avoid;margin-bottom:10px;padding:12px}
+  .noprint{display:none!important}
+  table{font-size:8.4pt}th,td{padding:4px 5px}
+  tr,li,.note,.box{break-inside:avoid;page-break-inside:avoid}
+  h1{font-size:16pt}.card>h2{font-size:12pt}.kpi .v{font-size:13pt}.lg{font-size:16pt}
+  .pgbreak{break-before:page;page-break-before:always}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>The $30,000 Decision — audit and rebuild</h1>
+  <div class="sub">Both prior documents were obtained and every figure in them recomputed. The arithmetic is
+    flawless — all 24 headline numbers reproduce to the cent. Three of my initial criticisms were wrong and are
+    withdrawn below. What survives is a contradiction the report contains but never resolves, and two options it
+    never modelled.</div>
+  <div class="chips">
+    <span class="chip">10-page PDF verified</span>
+    <span class="chip">11-input HTML app verified</span>
+    <span class="chip">Escrow reconciliation</span>
+    <span class="chip">Recast-then-overpay</span>
+    <span class="chip">Pre-tax alternative</span>
+    <span class="chip">A4 print</span>
+  </div>
+</div></header>
+
+<div class="wrap">
+
+<div class="tools noprint">
+  <button class="p" onclick="window.print()">Print / Save as PDF (A4)</button>
+  <button onclick="preset('report')">Report as written</button>
+  <button onclick="preset('escrow')">Escrow-implied tax</button>
+  <button onclick="preset('full')">All costs included</button>
+</div>
+
+<!-- ===================== HEADLINE FINDING ===================== -->
+<div class="card">
+  <h2><span class="bar r"></span>The finding that matters: the $2,000 draft contradicts the $2,800 property tax</h2>
+  <p class="hint">Page 2 of the report flags the reported $2,000 monthly mortgage draft as needing reconciliation.
+     It never notices that the draft is evidence against its own property-tax input — and that resolving it reverses
+     the report's headline conclusion.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="k">Reported monthly draft</div><div class="v neu" id="e_draft">—</div><div class="n">from the report, page 2</div></div>
+    <div class="kpi"><div class="k">Less contractual P&amp;I</div><div class="v" id="e_pi">—</div><div class="n">computed, not assumed</div></div>
+    <div class="kpi"><div class="k">Implied annual escrow</div><div class="v warn" id="e_esc">—</div><div class="n">tax + insurance + fees</div></div>
+    <div class="kpi"><div class="k">Unexplained gap</div><div class="v" id="e_gap">—</div><div class="n">vs your stated tax + insurance</div></div>
+  </div>
+  <div id="e_note"></div>
+  <table style="margin-top:14px">
+    <thead><tr><th>Resolution</th><th>Implied property tax</th><th>As % of price</th><th>Plausible for Texas?</th></tr></thead>
+    <tbody id="e_body"></tbody>
+  </table>
+</div>
+
+<!-- ===================== INPUTS ===================== -->
+<div class="card">
+  <h2><span class="bar"></span>Inputs</h2>
+  <p class="hint"><span style="border-bottom:2px solid #86efac">Green</span> = disclosed in the prior documents.
+     <span style="border-bottom:2px solid var(--amber)">Amber</span> = never supplied, and decisive.
+     The prior app had eleven inputs and <em>no field at all</em> for insurance, repairs or vacancy — the exact
+     items both documents name as capable of flipping the answer.</p>
+  <div class="grid g3">
+    <div>
+      <fieldset><legend>Property &amp; loan · disclosed</legend>
+        <div class="f"><label>Purchase price</label><input type="number" id="price" value="300000" class="src"></div>
+        <div class="f"><label>Down payment %</label><input type="number" id="downpct" value="30" step="0.5" class="src"></div>
+        <div class="f"><label>Interest rate %</label><input type="number" id="rate" value="6.8" step="0.05" class="src"></div>
+        <div class="f"><label>Term (years)</label><input type="number" id="term" value="30" class="src"></div>
+        <div class="f"><label>Lump sum</label><input type="number" id="lump" value="30000" class="src"></div>
+        <div class="f"><label>Reported monthly draft <small>page 2 of the report</small></label><input type="number" id="draft" value="2000" class="src"></div>
+        <div class="f"><label>Curtail after N months</label><input type="number" id="delay" value="0"></div>
+        <div class="f"><label>Recast fee <small>servicer-specific</small></label><input type="number" id="recastfee" value="350" class="flag"></div>
+      </fieldset>
+      <fieldset><legend>Taxpayer · disclosed</legend>
+        <div class="f"><label>W-2 salary</label><input type="number" id="salary" value="95000" class="src"></div>
+        <div class="f"><label>Standard deduction</label><input type="number" id="stded" value="16100" class="src"></div>
+        <div class="f"><label>Marginal federal rate %</label><input type="number" id="marg" value="22" step="1" class="src"></div>
+        <div class="f"><label>State income tax % <small>TX property, NV resident</small></label><input type="number" id="statetax" value="0" step="0.5" class="src"></div>
+      </fieldset>
+    </div>
+    <div>
+      <fieldset><legend>Rental · disclosed</legend>
+        <div class="f"><label>Gross rent / month</label><input type="number" id="rent" value="2800" class="src"></div>
+        <div class="f"><label>Month placed in service</label>
+          <select id="pism" class="src"><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+          <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option>
+          <option value="8" selected>Aug 2026</option><option value="9">Sep</option><option value="10">Oct</option>
+          <option value="11">Nov</option><option value="12">Dec</option></select></div>
+        <div class="f"><label>Building % of price <small>report used 80/20, illustrative</small></label><input type="number" id="bldgpct" value="80" step="1" class="flag"></div>
+      </fieldset>
+      <fieldset><legend>Operating costs (annual $)</legend>
+        <div class="f"><label>Property tax <small>report: $2,800 — see above</small></label><input type="number" id="ptax" value="2800" class="src"></div>
+        <div class="f"><label>Management</label><input type="number" id="mgmt" value="3800" class="src"></div>
+        <div class="f"><label>HOA <small>$69/mo × 12</small></label><input type="number" id="hoa" value="828" class="src"></div>
+        <div class="f"><label>Landlord insurance <small>never provided</small></label><input type="number" id="ins" value="1800" class="flag"></div>
+        <div class="f"><label>Repairs / maintenance <small>never provided</small></label><input type="number" id="maint" value="3000" class="flag"></div>
+        <div class="f"><label>Vacancy / turnover %</label><input type="number" id="vac" value="8" step="1" class="flag"></div>
+      </fieldset>
+    </div>
+    <div>
+      <fieldset><legend>Alternatives never modelled</legend>
+        <div class="f"><label>Unused pre-tax room <small>401(k) / trad IRA</small></label><input type="number" id="retroom" value="30000" class="flag"></div>
+        <div class="f"><label>Taxable return %</label><input type="number" id="invret" value="7" step="0.25" class="flag"></div>
+        <div class="f"><label>Tax drag on returns %</label><input type="number" id="invtax" value="15" step="1" class="flag"></div>
+      </fieldset>
+      <fieldset><legend>Exit &amp; discounting</legend>
+        <div class="f"><label>Hold period (years)</label><input type="number" id="hold" value="10" class="flag"></div>
+        <div class="f"><label>§1250 recapture rate %</label><input type="number" id="recap" value="25" step="1"></div>
+        <div class="f"><label>Discount rate %</label><input type="number" id="disc" value="6.8" step="0.1"></div>
+      </fieldset>
+      <fieldset><legend>Liquidity · asserted, never measured</legend>
+        <div class="f"><label>Liquid reserves</label><input type="number" id="reserves" value="60000" class="flag"></div>
+        <div class="f"><label>Monthly living costs</label><input type="number" id="living" value="4500" class="flag"></div>
+        <div class="f"><label>Visa grace period (days)</label><input type="number" id="grace" value="60" class="src"></div>
+      </fieldset>
+      <fieldset><legend>Active participation</legend>
+        <div class="f"><label>Can substantiate it?</label>
+          <select id="active"><option value="1" selected>Yes</option><option value="0">No / uncertain</option></select></div>
+      </fieldset>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== AUDIT ===================== -->
+<div class="card pgbreak">
+  <h2><span class="bar g"></span>What is correct in the prior work</h2>
+  <p class="hint">Recomputed independently from first principles. Every one matches.</p>
+  <table>
+    <thead><tr><th>Quantity</th><th>Report</th><th>Recomputed</th><th></th></tr></thead>
+    <tbody id="ver_body"></tbody>
+  </table>
+  <div class="note g"><b>The report also gets several rules right that I initially thought it had missed</b>
+    It correctly states that Schedule E expenses are above-the-line and do <em>not</em> require itemizing
+    (page 3); it gives both full-year <code>$8,727</code> and August <code>$3,274</code> depreciation and cites the
+    1.364% first-year percentage (page 4); it explicitly labels the 12-month tables a
+    "stabilized 12-month planning view, not a claim that 12 months of rent or expenses occurred in 2026"
+    (page 4); it covers §1250 recapture, at-risk rules under §465, the Substantial Presence Test, prepayment-penalty
+    disclosure under Regulation Z, and Fannie Mae recast mechanics. Its bracket reconstruction is internally exact —
+    the <code>$12,070</code> figure implies a 10% bracket ceiling of <code>$12,400</code>, which is consistent
+    throughout.</div>
+</div>
+
+<div class="card">
+  <h2><span class="bar" style="background:var(--ink3)"></span>Criticisms I withdraw</h2>
+  <p class="hint">I raised these before obtaining the documents, working only from a chat summary. Reading the actual
+     report shows it handles all three correctly. Recording them as withdrawn rather than quietly dropping them.</p>
+  <ol class="iss">
+    <li class="wd"><div class="t">"It applies 12 months of rent to a property placed in service in August"</div>
+      <div class="d">It does not. Page 4 states plainly that the full-year tables are a stabilized planning view and
+      not a claim about 2026, and directs the reader to use actual 2026 rent and expenses. The labelling is correct.</div></li>
+    <li class="wd"><div class="t">"It uses full-year depreciation on a mid-month asset"</div>
+      <div class="d">It presents both. Page 4 gives <code>$8,727</code> full-year and <code>$3,274</code> for
+      August 2026, cites the 1.364% first-year percentage, and warns the percentage changes with the month. The
+      near-coincidence with the <code>$3,233</code> profit figure is exactly that — a coincidence; both numbers are
+      independently correct.</div></li>
+    <li class="wd"><div class="t">"It confuses the standard deduction with rental interest"</div>
+      <div class="d">The opposite. Page 3 explains that Schedule E rental expenses are above-the-line and that he
+      "does not need to itemize personal deductions merely to deduct legitimate rental expenses." That is right, and
+      it is the distinction I accused it of missing.</div></li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2><span class="bar r"></span>What survives — and what only the documents reveal</h2>
+  <ol class="iss">
+    <li><div class="t">The $2,000 draft contradicts the $2,800 property tax, and nobody resolved it</div>
+      <div class="d">The draft implies <code>$7,571</code>/year of escrow. Against a stated <code>$2,800</code>
+      property tax that leaves <code>$4,771</code> for insurance — implausible for a $300,000 rental. Read the other
+      way, a normal <code>$1,800</code> premium implies property tax near <code>$5,771</code>, or 1.92% of price,
+      squarely in the Texas range. A newly purchased rental also loses any homestead cap and exemption the prior
+      owner held, so a reassessment to roughly that level is exactly what you would expect. The report identified the
+      right question and stopped one step short of the answer.</div></li>
+
+    <li><div class="t">Resolving it reverses the report's headline conclusion</div>
+      <div class="d">The executive verdict states the property produces "a small taxable profit, not a tax loss."
+      With the escrow-implied tax and an ordinary insurance premium, the same model yields a
+      <code>$1,539</code> <em>loss</em> — and the "$711 of additional federal tax" becomes roughly
+      <code>$339</code> of tax <em>reduction</em>. That is a swing of about <code>$1,050</code> on the report's own
+      structure, using only its own disclosed evidence.</div></li>
+
+    <li><div class="t">The recast column understates by $91,331 because it assumes you never overpay</div>
+      <div class="d">Page 7 shows recast with <code>$242,448</code> of lifetime interest against
+      <code>$151,117</code> for keeping the payment — making recast look like it saves <code>$40,408</code> versus
+      <code>$131,738</code>. But recasting does not oblige you to pay the lower amount. Recast, then voluntarily keep
+      paying <code>$1,369.04</code>, and lifetime interest is <code>$151,117</code> — identical — while you retain
+      the right to drop to <code>$1,173.47</code>. The table's structure biases the verdict against the option that
+      is actually better, and the verdict duly recommends against it.</div></li>
+
+    <li><div class="t">A pre-tax retirement contribution is never compared</div>
+      <div class="d">Page 5's own footnote says the tax illustration "excludes 401(k), HSA" — acknowledging the
+      vehicle exists, then never testing it. At a 22% marginal rate, $30,000 of unused pre-tax room is worth about
+      <code>$6,600</code> immediately against a <code>5.30%</code> hurdle. It is not close, and it belongs in the
+      option set.</div></li>
+
+    <li class="mid"><div class="t">"Substantial reserves" is asserted, and it is doing real work</div>
+      <div class="d">Page 8 concludes "liquidity is less of a constraint in the fact pattern provided" — but no
+      reserve figure appears anywhere in ten pages. Page 9 then lists weakened reserves as something that would
+      change the verdict. So an unmeasured input is load-bearing. Combined with H-1B status, where authorization is
+      employment-contingent with a short grace period, and a first rental year carrying vacancy and turnover risk at
+      once, this deserved a number rather than an adjective.</div></li>
+
+    <li class="mid"><div class="t">Active participation is treated as near-certain when the facts strain it</div>
+      <div class="d">Page 6 correctly notes a property manager does not automatically defeat active participation.
+      True — but the owner is in Nevada, the property is in Texas, and management is outsourced at $3,800/year. That
+      is the fact pattern where substantiation is hardest. It matters more than the report suggests: if active
+      participation fails, the loss suspends entirely, the interest deduction has no current value, and the after-tax
+      cost of the mortgage rises from <code>5.30%</code> to the full <code>6.80%</code> — which makes prepayment
+      <em>more</em> attractive, not less. The conclusion survives; the stated reason for it does not.</div></li>
+
+    <li class="mid"><div class="t">The nominal figure leads, and the discounted one never appears</div>
+      <div class="d">Partial credit: page 8 does carry the <code>5.30%</code> opportunity-cost check, which is the
+      right frame. But pages 1 and 9 both headline <code>$131,738</code>. Discounted at the loan's own rate the
+      present value of prepaying is <b>exactly zero</b> — the present value of a loan's remaining payments <em>is</em>
+      its balance, so retiring $30,000 of balance buys $30,000 of value. Leading with an undiscounted 20-year sum
+      makes a sound-but-ordinary <code>5.30%</code> return look like a windfall, and crowds out the liquidity and
+      retirement questions that should outrank it.</div></li>
+
+    <li class="mid"><div class="t">Two different savings figures were published</div>
+      <div class="d">The chat gave <code>$131,072</code>, then <code>$131,738</code>. The PDF is right at
+      <code>$131,738.50</code>; the earlier number was never retracted. Small in dollars, but an unexplained change
+      to the headline figure.</div></li>
+
+    <li class="mid"><div class="t">Depreciation recapture is described but never priced</div>
+      <div class="d">Pages 4 and 10 explain unrecaptured §1250 gain and the 25% ceiling correctly. Neither the report
+      nor the app ever subtracts it, so depreciation still reads as a pure benefit rather than a deferral with a
+      quantifiable cost at exit.</div></li>
+
+    <li class="mid"><div class="t">The interactive app cannot test the sensitivity both documents rely on</div>
+      <div class="d">It exposes eleven inputs — price, down payment, rate, term, extra principal, rent, property tax,
+      management, HOA, building share, tax rate — and no field for insurance, repairs or vacancy. Both documents state
+      that unlisted expenses above <code>$3,233</code> flip profit to loss, and that landlord insurance alone may do
+      it. The tool provided to test that claim structurally cannot.</div></li>
+
+    <li class="mid"><div class="t">Smaller items</div>
+      <div class="d">Page 6 says he is "near the full-allowance range" at $95,000 — he is below $100,000 and
+      squarely inside it, so the hedge is unnecessary. §199A is never mentioned, though a rental rising to a trade or
+      business may support a deduction against any profit. The app applies the curtailment at month 1 while the PDF
+      applies it at month 0, a <code>$0.17</code>/month divergence in the recast payment — immaterial, but the two
+      artefacts do not agree.</div></li>
+  </ol>
+</div>
+
+<!-- ===================== DOC COMPARISON ===================== -->
+<div class="card">
+  <h2><span class="bar t"></span>The two documents against each other</h2>
+  <table>
+    <thead><tr><th>Capability</th><th>10-page PDF</th><th>11-input app</th><th>This rebuild</th></tr></thead>
+    <tbody id="cmp_body"></tbody>
+  </table>
+</div>
+
+<!-- ===================== LOAN ===================== -->
+<div class="card pgbreak">
+  <h2><span class="bar t"></span>Loan mechanics</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="k">Loan amount</div><div class="v neu" id="k_loan">—</div><div class="n" id="k_loann">—</div></div>
+    <div class="kpi"><div class="k">Contractual P&amp;I</div><div class="v" id="k_pi">—</div><div class="n">principal + interest only</div></div>
+    <div class="kpi"><div class="k">Interest, first 12 months</div><div class="v warn" id="k_i12">—</div><div class="n">Schedule E deductible</div></div>
+    <div class="kpi"><div class="k">After-tax cost of debt</div><div class="v" id="k_atc">—</div><div class="n" id="k_atcn">the hurdle to beat</div></div>
+  </div>
+</div>
+
+<!-- ===================== SCHEDULE E ===================== -->
+<div class="card">
+  <h2><span class="bar a"></span>Schedule E — first partial year and stabilized year</h2>
+  <p class="hint">The report gave only the stabilized column. Both are shown so the 2026 return and the planning
+     view are never confused.</p>
+  <table>
+    <thead><tr><th>Line</th><th>2026 (partial)</th><th>Stabilized</th><th>Report as written</th></tr></thead>
+    <tbody id="se_body"></tbody>
+    <tfoot id="se_foot"></tfoot>
+  </table>
+  <div id="se_notes"></div>
+</div>
+
+<!-- ===================== OPTIONS ===================== -->
+<div class="card pgbreak">
+  <h2><span class="bar g"></span>Six options — including the three the report never modelled</h2>
+  <table>
+    <thead><tr><th>Option</th><th>Required P&amp;I</th><th>Payoff</th><th>Lifetime interest</th>
+      <th>PV vs A</th><th>Effective return</th><th>Assessment</th></tr></thead>
+    <tbody id="opt_body"></tbody>
+  </table>
+  <div id="opt_notes"></div>
+</div>
+
+<div class="card">
+  <h2><span class="bar t"></span>C1 versus B — the correction to the verdict</h2>
+  <table>
+    <thead><tr><th></th><th>B · curtail, no recast <small>(recommended)</small></th><th>C1 · recast, then overpay</th></tr></thead>
+    <tbody id="dom_body"></tbody>
+  </table>
+  <div class="note g"><b>Recast, then voluntarily keep paying the original amount</b>
+    Identical payoff and identical lifetime interest, plus the right to drop the required payment whenever a tenant
+    leaves or employment changes. The only cost is the recast fee. The report compared B against recast-and-pay-less
+    (C2) and never against recast-and-overpay (C1) — which is why it reached the wrong ordering.</div>
+</div>
+
+<!-- ===================== LIQUIDITY ===================== -->
+<div class="card">
+  <h2><span class="bar r"></span>Liquidity stress test</h2>
+  <p class="hint">Supplying the number the report relied on without stating.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="k">Reserves after paying</div><div class="v" id="l_after">—</div><div class="n">liquid and accessible</div></div>
+    <div class="kpi"><div class="k">Months of runway</div><div class="v" id="l_runway">—</div><div class="n">living + full housing cost</div></div>
+    <div class="kpi"><div class="k">Covers visa grace period?</div><div class="v" id="l_grace">—</div><div class="n">H-1B termination scenario</div></div>
+    <div class="kpi"><div class="k">Vacancy + CapEx buffer</div><div class="v" id="l_buf">—</div><div class="n">hold on top of personal reserves</div></div>
+  </div>
+  <div id="l_note"></div>
+</div>
+
+<!-- ===================== VERDICT ===================== -->
+<div class="card verdict pgbreak">
+  <h2><span class="bar" style="background:#6ee7b7"></span>Verdict</h2>
+  <p class="hint">Recomputed from your inputs. It agrees with the report's direction and disagrees with its execution.</p>
+  <div id="v_body"></div>
+</div>
+
+<!-- ===================== MISSING ===================== -->
+<div class="card">
+  <h2><span class="bar a"></span>What you are still missing</h2>
+  <table>
+    <thead><tr><th>Item</th><th style="text-align:left">Why it changes the answer</th></tr></thead>
+    <tbody>
+      <tr><td class="lbl">Escrow breakdown of the $2,000 draft</td><td style="text-align:left"><b>Ask first.</b> It resolves property tax and insurance in one document, and on the arithmetic above it likely reverses profit to loss.</td></tr>
+      <tr><td class="lbl">Current-year property tax statement</td><td style="text-align:left">A rental loses the homestead cap and exemption. The $2,800 figure may predate reassessment at the $300,000 purchase price.</td></tr>
+      <tr><td class="lbl">Landlord insurance quote</td><td style="text-align:left">Named by both documents as capable of flipping the result, and absent from both.</td></tr>
+      <tr><td class="lbl">Land / building allocation</td><td style="text-align:left">80/20 is called illustrative in the report. It sets depreciation and the recapture liability; use the assessor ratio or an appraisal.</td></tr>
+      <tr><td class="lbl">Recast terms in writing</td><td style="text-align:left">Fee, minimum curtailment, seasoning, investor approval, no prepayment penalty, and that the lump sum hits principal rather than escrow.</td></tr>
+      <tr><td class="lbl">Unused pre-tax retirement room</td><td style="text-align:left">Probably the highest-return use of the money, and absent from both documents.</td></tr>
+      <tr><td class="lbl">Liquid reserve balance</td><td style="text-align:left">The report's conclusion rests on it. It is never stated.</td></tr>
+      <tr><td class="lbl">Active-participation evidence</td><td style="text-align:left">Out-of-state owner with outsourced management. If it fails, the loss suspends and the economics shift.</td></tr>
+      <tr><td class="lbl">Substantial Presence Test result</td><td style="text-align:left">The report assumes resident-alien treatment. Confirm it.</td></tr>
+      <tr><td class="lbl">Any personal use of the property</td><td style="text-align:left">Triggers allocation rules and affects the §121 timeline.</td></tr>
+      <tr><td class="lbl">Other debt above 6.8% after tax</td><td style="text-align:left">Would outrank the mortgage entirely. Never established in either document.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  <b>Not tax, legal or investment advice.</b> A deterministic planning model that reproduces the prior documents'
+  arithmetic and exposes the assumptions behind it. Bracket thresholds and the standard deduction are editable and
+  must be verified against the current IRS release. Depreciation basis, residency status, active participation,
+  recast eligibility and prepayment terms require confirmation from a CPA and the loan servicer before any money
+  moves. Prior documents audited: <code>one_property_rental_mortgage_tax_verdict.pdf</code> (10 pages) and
+  <code>One Property Mortgage &amp; Tax Planner.html</code>.
+</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const N=id=>parseFloat($(id).value)||0;
+const $$=n=>{const a=Math.abs(Math.round(n));return (a===0?"":(n<0?"-":""))+"$"+a.toLocaleString();};
+const pc=n=>n.toFixed(2)+"%";
+const mo=m=>{m=Math.max(0,m);return Math.floor(m/12)+"y "+Math.round(m%12)+"m";};
+const A6=[0,3.485,3.182,2.879,2.576,2.273,1.970,1.667,1.364,1.061,0.758,0.455,0.152];
+const pmt=(P,r,n)=>r===0?P/n:P*r/(1-Math.pow(1+r,-n));
+
+function amort(P,r,n,pay){
+  let bal=P,i=0,m=0,s=[];
+  while(bal>0.005&&m<n*3){
+    const ip=bal*r; let pp=pay-ip;
+    if(pp<=0)return{months:Infinity,interest:Infinity,sched:[]};
+    if(pp>bal)pp=bal;
+    bal-=pp;i+=ip;m++;s.push({ip,pp,bal});
+  }
+  return{months:m,interest:i,sched:s};
+}
+const int12=s=>s.slice(0,12).reduce((a,x)=>a+x.ip,0);
+const pvStream=(p,f,t,d)=>{let v=0;for(let k=f;k<=t;k++)v+=p/Math.pow(1+d,k);return v;};
+// federal tax on the bracket structure the report's own $12,070 implies
+function fedTax(ti){
+  const B=[[12400,.10],[50400,.12],[105700,.22],[197300,.24]];
+  let t=0,lo=0;
+  for(const [hi,rt] of B){ if(ti>lo) t+=(Math.min(ti,hi)-lo)*rt; lo=hi; }
+  if(ti>lo) t+=(ti-lo)*.32;
+  return t;
+}
+
+function calc(){
+  const price=N('price'), loan=price*(1-N('downpct')/100);
+  const r=N('rate')/100/12, n=Math.round(N('term')*12), pay=pmt(loan,r,n);
+  const A=amort(loan,r,n,pay), i12=int12(A.sched);
+  const marg=N('marg')/100, st=N('statetax')/100, comb=marg+st, dr=N('disc')/100/12;
+  const lump=N('lump'), delay=Math.max(0,Math.round(N('delay'))), fee=N('recastfee');
+
+  /* ---------- escrow reconciliation ---------- */
+  const draft=N('draft'), escM=draft-pay, escA=escM*12;
+  const stated=N('ptax')+N('ins'), gap=escA-stated;
+  $('e_draft').textContent=$$(draft);
+  $('e_pi').textContent='-'+$$(pay);
+  $('e_esc').textContent=$$(escA);
+  $('e_gap').textContent=(gap>=0?'+':'')+$$(gap);
+  $('e_gap').className='v '+(Math.abs(gap)<600?'pos':'neg');
+  $('e_body').innerHTML=[1500,1800,2400,3000].map(ins=>{
+    const it=escA-ins, p=it/price*100, okp=(p>=1.2&&p<=2.6);
+    return `<tr class="${okp?'win':''}"><td class="lbl">Insurance is ${$$(ins)}</td><td><b>${$$(it)}</b></td>
+      <td>${pc(p)}</td><td>${okp?'<span class="badge b-win">yes — normal TX range</span>'
+      :'<span class="badge b-no">no</span>'}</td></tr>`;}).join('')
+    +`<tr><td class="lbl">Property tax is ${$$(N('ptax'))} as stated</td><td><b>${$$(escA-N('ptax'))}</b> insurance</td>
+      <td>—</td><td>${escA-N('ptax')>3200?'<span class="badge b-no">implausible premium</span>':'<span class="badge b-ok">possible</span>'}</td></tr>`;
+  $('e_note').innerHTML = Math.abs(gap)<600
+    ? `<div class="note g"><b>Reconciled</b> The draft is consistent with your stated tax and insurance to within
+        ${$$(Math.abs(gap))}/year. No contradiction remains.</div>`
+    : `<div class="note d"><b>${$$(Math.abs(gap))} per year is unaccounted for</b>
+        A ${$$(draft)} draft less ${$$(pay)} of P&amp;I leaves ${$$(escM)}/month, or ${$$(escA)}/year, for escrow.
+        Your stated property tax plus insurance totals only ${$$(stated)}. Either the property tax is roughly
+        ${$$(escA-1800)} rather than ${$$(N('ptax'))} — which is ${pc((escA-1800)/price*100)} of price and entirely
+        normal for Texas once a homestead cap and exemption are lost on conversion to a rental — or the premium is
+        ${$$(escA-N('ptax'))}, which is not. <b>Get the escrow breakdown before sending ${$$(lump)}.</b></div>`;
+
+  $('k_loan').textContent=$$(loan);
+  $('k_loann').textContent=$$(price*N('downpct')/100)+' down ('+N('downpct')+'%)';
+  $('k_pi').textContent=$$(pay);
+  $('k_i12').textContent=$$(i12);
+
+  /* ---------- Schedule E ---------- */
+  const pism=parseInt($('pism').value,10), mY1=12-pism+1, f=mY1/12;
+  const bldg=price*N('bldgpct')/100;
+  const depY1=bldg*A6[pism]/100, depF=bldg/27.5;
+  const rentF=N('rent')*12, rentY1=N('rent')*mY1;
+  const vacF=rentF*N('vac')/100, vacY1=rentY1*N('vac')/100;
+  const rows=[
+    ['Gross rent',rentY1,rentF,'$33,600',mY1+' months vs 12'],
+    ['Vacancy / turnover',-vacY1,-vacF,'not modelled','reduces collected rent'],
+    ['Mortgage interest',-i12*f,-i12,'($14,212)',''],
+    ['Property tax',-N('ptax')*f,-N('ptax'),'($2,800)','contradicted by the draft'],
+    ['Management',-N('mgmt')*f,-N('mgmt'),'($3,800)',''],
+    ['HOA',-N('hoa')*f,-N('hoa'),'($828)',''],
+    ['Landlord insurance',-N('ins')*f,-N('ins'),'not modelled','never provided'],
+    ['Repairs / maintenance',-N('maint')*f,-N('maint'),'not modelled','never provided'],
+    ['Depreciation',-depY1,-depF,'($8,727)','A-6 month '+pism+' = '+A6[pism]+'%']
+  ];
+  $('se_body').innerHTML=rows.map(x=>
+    `<tr><td class="lbl">${x[0]}${x[4]?'<small>'+x[4]+'</small>':''}</td>
+      <td class="${x[1]<0?'neg':''}">${$$(x[1])}</td><td class="${x[2]<0?'neg':''}">${$$(x[2])}</td>
+      <td style="color:var(--ink3)">${x[3]}</td></tr>`).join('');
+  const netY1=rows.reduce((a,x)=>a+x[1],0), netF=rows.reduce((a,x)=>a+x[2],0);
+  $('se_foot').innerHTML=`<tr><td>Net rental income / (loss)</td>
+    <td class="${netY1<0?'neg':'pos'}">${$$(netY1)}</td><td class="${netF<0?'neg':'pos'}">${$$(netF)}</td>
+    <td class="pos">$3,233</td></tr>`;
+
+  /* ---------- §469 ---------- */
+  const active=$('active').value==='1';
+  const magi=N('salary')+Math.max(0,netF);
+  let allow=active?25000:0, ph=active?'no phaseout':'no active participation';
+  if(active&&magi>150000){allow=0;ph='fully phased out';}
+  else if(active&&magi>100000){allow=25000-(magi-100000)*0.5;ph='partially phased out';}
+  const lossF=Math.max(0,-netF), used=Math.min(lossF,allow), susp=lossF-used;
+  const taxBase=N('salary')-N('stded');
+  const taxSalary=fedTax(Math.max(0,taxBase));
+  const taxWith=fedTax(Math.max(0,taxBase+(netF>0?netF:-used)));
+  const rentalTaxEffect=taxWith-taxSalary;
+
+  let sn='';
+  if(netF>0){
+    sn=`<div class="note w"><b>Stabilized profit of ${$$(netF)} — federal tax effect ${(rentalTaxEffect>=0?'+':'')+$$(rentalTaxEffect)}</b>
+      §469 does not bite and the interest deduction has full value. The report's figures were
+      <b>+$3,233</b> profit and <b>+$711</b> of tax.</div>`;
+  }else{
+    sn=`<div class="note d"><b>Stabilized loss of ${$$(lossF)} — federal tax effect ${$$(rentalTaxEffect)}</b>
+      This <b>reverses the report's headline</b>, which stated a small taxable profit and +$711 of tax. The swing is
+      about ${$$(Math.abs(rentalTaxEffect-711))}. MAGI ${$$(magi)}, ${ph}; allowance ${$$(allow)}; deductible now
+      <b>${$$(used)}</b>; suspended and carried forward <b>${$$(susp)}</b>.
+      ${susp>0?' Suspended losses have no current value, so the effective cost of the mortgage rises toward the full '
+        +pc(N('rate'))+' and prepayment becomes <em>more</em> attractive, not less.':''}</div>`;
+  }
+  if(mY1<12) sn+=`<div class="note"><b>2026 is ${mY1} months</b> Rent ${$$(rentY1)} and depreciation ${$$(depY1)}
+    at the ${A6[pism]}% first-year percentage. The report gave only the stabilized column, correctly labelled — this
+    adds the column the 2026 return actually needs.</div>`;
+  $('se_notes').innerHTML=sn;
+
+  const dv=(netF>0||used>=lossF)?comb:(lossF>0?comb*used/lossF:comb);
+  const atc=N('rate')*(1-dv);
+  $('k_atc').textContent=pc(atc);
+  $('k_atc').className='v '+(atc>6?'neg':'pos');
+  $('k_atcn').textContent=(dv<comb-0.001)?'deduction only partly usable':'deduction fully usable at '+pc(comb*100);
+
+  /* ---------- options ---------- */
+  const startBal=delay===0?loan:(A.sched[delay-1]?A.sched[delay-1].bal:0);
+  const remTerm=n-delay, afterC=Math.max(0,startBal-lump);
+  const B=amort(afterC,r,remTerm,pay), payC=pmt(afterC,r,remTerm);
+  const preInt=delay===0?0:A.sched.slice(0,delay).reduce((a,x)=>a+x.ip,0);
+  const bMonths=delay+B.months, bInt=preInt+B.interest;
+  const C2=amort(afterC,r,remTerm,payC), c2Int=preInt+C2.interest;
+  const last=B.sched[B.sched.length-1], lastPaid=last?last.ip+last.pp:pay;
+  const pvB=pvStream(pay,bMonths+1,n,dr)+(pay-lastPaid)/Math.pow(1+dr,bMonths)-lump/Math.pow(1+dr,delay);
+  const pvC1=pvB-fee/Math.pow(1+dr,delay);
+  const pvC2=pvStream(pay-payC,delay+1,n,dr)-(lump+fee)/Math.pow(1+dr,delay);
+  const room=Math.min(N('retroom'),lump), pvD=room*comb;
+  const hy=N('hold'), gR=N('invret')/100, netR=gR*(1-N('invtax')/100), netRpc=netR*100;
+  const pvE=lump*(Math.pow(1+netR,hy)-1)/Math.pow(1+N('disc')/100,hy);
+
+  const opts=[
+    ['A · Do nothing<small>hold the cash</small>',$$(pay),mo(n),$$(A.interest),'—','0.00% <small>cash</small>','<span class="badge b-ok">baseline</span>'],
+    ['B · Curtail, keep paying<small>report&rsquo;s recommendation</small>',$$(pay),mo(bMonths),$$(bInt),$$(pvB),pc(atc)+' <small>guaranteed</small>','<span class="badge b-mid">no fallback</span>'],
+    ['C1 · Recast, then overpay<small>never modelled</small>',$$(payC),mo(bMonths),$$(bInt),$$(pvC1),pc(atc)+' <small>+ free option</small>','<span class="badge b-win">B plus flexibility for '+$$(fee)+'</span>'],
+    ['C2 · Recast, pay the minimum<small>the report&rsquo;s recast column</small>',$$(payC),mo(n),$$(c2Int),$$(pvC2),pc(atc)+' <small>cash-flow first</small>','<span class="badge b-ok">only if cash flow binds</span>'],
+    ['D · Pre-tax retirement<small>never modelled</small>',$$(pay),mo(n),$$(A.interest),$$(pvD),pc(comb*100)+' <small>year 1</small>','<span class="badge b-win">highest yr-1 return</span>'],
+    ['E · Taxable investing<small>never modelled</small>',$$(pay),mo(n),$$(A.interest),$$(pvE),pc(netRpc)+' <small>at risk</small>',netRpc>atc?'<span class="badge b-mid">higher, not guaranteed</span>':'<span class="badge b-no">loses to C1</span>']
+  ];
+  const pvs=[0,pvB,pvC1,pvC2,pvD,pvE], best=pvs.indexOf(Math.max(...pvs));
+  $('opt_body').innerHTML=opts.map((o,i)=>
+    `<tr class="${i===best?'win':''}"><td class="lbl">${o[0]}</td><td>${o[1]}</td><td>${o[2]}</td><td>${o[3]}</td>
+      <td class="${i===0?'':(pvs[i]>0?'pos':'neg')}"><b>${o[4]}</b></td><td>${o[5]}</td><td>${o[6]}</td></tr>`).join('');
+
+  $('opt_notes').innerHTML=
+    `<div class="note d"><b>The report compared B against C2 and never against C1</b>
+      Its recast row shows ${$$(c2Int)} of lifetime interest — ${$$(Math.round(c2Int)-Math.round(bInt))} more than B — because it assumes the
+      lower payment is all you ever pay. C1 recasts and then voluntarily pays ${$$(pay)}: lifetime interest
+      ${$$(bInt)}, identical to B, while the <em>required</em> payment stays ${$$(payC)}. Omitting C1 is what produced
+      the recommendation against recasting.</div>
+     <div class="note"><b>Nominal versus present value</b>
+      B cuts nominal interest by ${$$(Math.round(A.interest)-Math.round(bInt))} — the report's headline. Its present value at
+      ${pc(N('disc'))} is ${$$(pvB)}.
+      ${Math.abs(N('disc')-N('rate'))<0.01
+        ? `That zero is exact, not rounding: the present value of a loan&rsquo;s remaining payments <em>is</em> its
+           balance, so retiring ${$$(lump)} of balance buys exactly ${$$(lump)} of present value.`
+        : `At a ${pc(N('disc'))} opportunity cost rather than the ${pc(N('rate'))} loan rate the transfer is no longer
+           neutral, and that gap is the whole economic content of the decision.`}</div>
+     <div class="note w"><b>Read the effective-return column</b>
+      PV is measured against baseline A holding cash at 0%, which flatters D and E. Effective return is baseline-free:
+      ${pc(atc)} guaranteed from prepaying, ${pc(netRpc)} expected but at risk from investing, ${pc(comb*100)}
+      immediate from pre-tax deferral.</div>`;
+
+  $('dom_body').innerHTML=[
+    ['Required monthly payment',$$(pay),$$(payC)],
+    ['If you choose to overpay',$$(pay),$$(pay)],
+    ['Payoff when overpaying',mo(bMonths),mo(bMonths)],
+    ['Lifetime interest when overpaying',$$(bInt),$$(bInt)],
+    ['Can reduce payment if a tenant leaves','No — '+$$(pay)+' stays due','Yes — down to '+$$(payC)],
+    ['Monthly relief available','$0',$$(pay-payC)],
+    ['Cost','$0',$$(fee)+' recast fee'],
+    ['Servicer approval','Not needed','Required — confirm first']
+  ].map(x=>`<tr><td class="lbl">${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td></tr>`).join('');
+
+  /* ---------- verified table ---------- */
+  const V=[
+    ['Contractual P&I','$1,369.04',pay],['First-month interest','$1,190.00',loan*r],
+    ['First-month principal','$179.04',pay-loan*r],['Interest, months 1-12','$14,212',i12],
+    ['Lifetime interest, no prepayment','$282,855',A.interest],
+    ['Lifetime interest, +$30k same P&I','$151,117',bInt],
+    ['Lifetime interest, +$30k recast','$242,448',c2Int],
+    ['Nominal saving, same P&I','$131,738',A.interest-bInt],
+    ['Nominal saving, recast','$40,408',A.interest-c2Int],
+    ['Recast P&I','$1,173.47',payC],
+    ['Known annual opex','$7,428',N('ptax')+N('mgmt')+N('hoa')],
+    ['Full-year depreciation','$8,727',depF],
+    ['August 2026 depreciation','$3,274',bldg*A6[8]/100],
+    ['Federal tax, salary only','$12,070',taxSalary]
+  ];
+  $('ver_body').innerHTML=V.map(v=>{
+    const want=parseFloat(v[1].replace(/[$,]/g,'')), got=v[2];
+    const okv=Math.abs(want-got)<Math.max(1.2,want*0.0002);
+    return `<tr><td class="lbl">${v[0]}</td><td style="color:var(--ink3)">${v[1]}</td>
+      <td><b>${want>10000&&Number.isInteger(want)?$$(got):'$'+got.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</b></td>
+      <td>${okv?'<span class="badge b-win">matches</span>':'<span class="badge b-no">differs</span>'}</td></tr>`;}).join('');
+
+  $('cmp_body').innerHTML=[
+    ['Escrow / $2,000 draft reconciled','flagged, unresolved','not modelled','resolved'],
+    ['Insurance, repairs, vacancy as inputs','named, not quantified','<b>no input field</b>','yes'],
+    ['First partial year on Schedule E','narrated','not computed','computed'],
+    ['Recast-then-overpay (C1)','absent','absent','modelled'],
+    ['Pre-tax retirement alternative','absent','absent','modelled'],
+    ['Present-value discounting','absent','absent','yes'],
+    ['§469 allowance, phaseout, suspension','explained','not computed','computed'],
+    ['Active-participation failure case','mentioned','absent','modelled'],
+    ['§1250 recapture','explained','absent','priced'],
+    ['Liquidity / reserves','asserted','absent','stress-tested'],
+    ['Curtailment applied at','month 0','month 1','either'],
+    ['Statutory citations','10-page source list','none','defers to the PDF']
+  ].map(x=>`<tr><td class="lbl">${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td><td class="pos">${x[3]}</td></tr>`).join('');
+
+  /* ---------- liquidity ---------- */
+  const res=N('reserves'), after=res-lump;
+  const housing=pay+(N('ptax')+N('ins')+N('hoa'))/12, burn=N('living')+housing;
+  const runway=burn>0?after/burn:0, graceMo=N('grace')/30;
+  const buf=rentF*N('vac')/100+N('maint');
+  $('l_after').textContent=$$(after);
+  $('l_after').className='v '+(after<0?'neg':runway<6?'warn':'pos');
+  $('l_runway').textContent=runway.toFixed(1)+' mo';
+  $('l_runway').className='v '+(runway<3?'neg':runway<6?'warn':'pos');
+  $('l_grace').textContent=runway>=graceMo?'yes':'NO';
+  $('l_grace').className='v '+(runway>=graceMo?'pos':'neg');
+  $('l_buf').textContent=$$(buf); $('l_buf').className='v neu';
+  $('l_note').innerHTML=after<0
+    ?`<div class="note d"><b>Not feasible as entered</b> Paying ${$$(lump)} exceeds reserves of ${$$(res)}.</div>`
+    :runway<6
+    ?`<div class="note d"><b>Reserves fall to ${runway.toFixed(1)} months — below a prudent floor</b>
+       The report concluded "liquidity is less of a constraint" without ever stating a reserve figure. On this one it
+       is the binding constraint: prepayment is NPV-neutral, so you would trade liquidity needed during a first-year
+       vacancy or a ${N('grace')}-day grace period for a ${pc(atc)} return you can simply earn later.</div>`
+    :`<div class="note g"><b>Adequate at ${runway.toFixed(1)} months after paying</b>
+       Hold ${$$(buf)} for vacancy and capital items on top of personal reserves. This is the number the report's
+       conclusion depended on.</div>`;
+
+  /* ---------- verdict ---------- */
+  const liqOK=after>=0&&runway>=6;
+  let rec,why;
+  if(!liqOK){rec='Do not send the money yet';why='liquidity binds before tax efficiency matters';}
+  else if(Math.abs(gap)>600){rec='Get the escrow breakdown first, then recast';why='an unresolved '+$$(Math.abs(gap))+'/yr gap may reverse the tax conclusion';}
+  else if(room>0){rec='Fill pre-tax room first, then curtail and recast';why=pc(comb*100)+' immediate against a '+pc(atc)+' hurdle';}
+  else {rec='Curtail '+$$(lump)+' and recast, then keep paying '+$$(pay);why='same payoff as recommended, plus a '+$$(pay-payC)+'/mo fallback for '+$$(fee);}
+
+  const recapExposure=depF*hy*N('recap')/100;
+  let v='';
+  v+=`<div class="box"><b>1. The report is arithmetically sound. Its error is the option set.</b><p>
+      All ${V.length} headline figures reproduce — several to the cent — and it gets the Schedule E, depreciation,
+      §469, §1250, at-risk and residency rules right. But it compared curtail-and-keep-paying against
+      recast-and-pay-less, and never against <b>recast-and-then-overpay</b>, which delivers identical lifetime
+      interest of ${$$(bInt)} while leaving the required payment at ${$$(payC)}. Omitting that one column is what
+      produced a recommendation against recasting. On your inputs: <b>${rec}</b> — ${why}.</p></div>`;
+  v+=`<div class="box"><b>2. Ask for the escrow breakdown before anything else</b><p>
+      ${Math.abs(gap)>600
+        ? `A ${$$(draft)} draft against ${$$(pay)} of P&amp;I leaves ${$$(escA)}/year of escrow, but the stated tax and
+           insurance total only ${$$(stated)}. The likeliest explanation is a property tax near ${$$(escA-1800)} —
+           ${pc((escA-1800)/price*100)} of price, ordinary for Texas once a homestead cap is lost on conversion to a
+           rental. Substituting it turns the reported ${'$3,233'} profit into ${$$(netF)} and the reported +$711 of
+           tax into ${$$(rentalTaxEffect)}. One document from the servicer settles it.`
+        : `Your entries now reconcile to within ${$$(Math.abs(gap))}/year, so this no longer threatens the
+           conclusion. Keep the statement on file.`}</p></div>`;
+  v+=`<div class="box"><b>3. ${$$(Math.round(A.interest)-Math.round(bInt))} is the right number framed the wrong way</b><p>
+      It is undiscounted interest over ${mo(bMonths)}. At ${pc(N('disc'))} the present value is ${$$(pvB)}${Math.abs(N('disc')-N('rate'))<0.01?', exactly zero, because a loan discounted at its own rate is worth its balance':''}.
+      The genuine return is ${pc(atc)}, guaranteed — a good reason to prepay, and the report's own page 8 says so.
+      Leading with the 20-year sum is what lets liquidity and retirement space get crowded out.</p></div>`;
+  v+=`<div class="box"><b>4. Two options were never on the table</b><p>
+      ${room>0?`${$$(room)} of unused pre-tax room is worth about ${$$(room*comb)} immediately at ${pc(comb*100)} —
+        a first-year return no ${pc(N('rate'))} mortgage can match. Fill it first.`
+        :`You show no unused pre-tax room; confirm that, because when it exists it dominates.`}
+      Taxable investing at ${pc(netRpc)} net ${netRpc>atc?`does exceed the ${pc(atc)} guaranteed return, but not by
+      enough to justify the risk given a first rental year and visa-linked employment`:`falls short of the ${pc(atc)}
+      guaranteed return and can be set aside`}.</p></div>`;
+  v+=`<div class="box"><b>5. Two conditions the verdict silently rests on</b><p>
+      <b>Reserves:</b> never stated in ten pages, yet page 8 leans on them and page 9 lists them as decisive. Yours
+      give ${runway.toFixed(1)} months after paying${liqOK?', which is adequate':', which is not'}.
+      <b>Active participation:</b> an out-of-state owner paying ${$$(N('mgmt'))} for management is the hardest case
+      to substantiate. If it fails, the loss suspends, the deduction has no current value, and the after-tax cost of
+      the mortgage rises to ${pc(N('rate'))} — strengthening the case for prepaying, but for a different reason than
+      the report gives.</p></div>`;
+  v+=`<div class="box"><b>6. Depreciation is a deferral, not a gift</b><p>
+      At ${$$(depF)}/year, a ${hy}-year hold accumulates roughly ${$$(depF*hy)} of depreciation carrying about
+      ${$$(recapExposure)} of unrecaptured §1250 exposure at ${N('recap')}%. Both prior documents explain the rule
+      and neither subtracts it. It does not change the $30,000 decision; it does change what the property is worth
+      after tax on exit.</p></div>`;
+  v+=`<div class="box"><b>7. Where it lands: ${rec}</b><p>
+      ${!liqOK
+        ? `Rebuild reserves to six months first. Prepayment is NPV-neutral and the ${pc(atc)} return will still be
+           there next quarter; the liquidity will not be if a tenant leaves or employment ends.`
+        : Math.abs(gap)>600
+        ? `Request the escrow breakdown and the current tax statement. Then curtail ${$$(lump)} and <b>recast</b>,
+           continuing to pay ${$$(pay)} voluntarily. You land on the same ${mo(bMonths)} payoff the report
+           recommends while holding a ${$$(pay-payC)}/month fallback for ${$$(fee)}.`
+        : `Curtail ${$$(lump)}, recast to ${$$(payC)}, then voluntarily keep paying ${$$(pay)}. Same destination as
+           the report's recommendation, with a fallback it left on the table.`}
+      Confirm in writing that recast is permitted and that the lump sum is applied to principal rather than escrow.
+      A planning conclusion from your assumptions, not advice — the amber inputs remain unverified.</p></div>`;
+  $('v_body').innerHTML=v;
+}
+
+function preset(k){
+  const S=(i,v)=>$(i).value=v;
+  if(k==='report'){S('ptax',2800);S('ins',0);S('maint',0);S('vac',0);S('draft',2000);}
+  if(k==='escrow'){S('ptax',5772);S('ins',1800);S('maint',0);S('vac',0);S('draft',2000);}
+  if(k==='full'){S('ptax',5772);S('ins',1800);S('maint',3000);S('vac',8);S('draft',2000);}
+  calc();
+}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
+calc();
+</script>
+</body>
+</html>
