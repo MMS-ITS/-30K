@@ -6,8 +6,13 @@ Audit of the two documents on `main` (`one_property_rental_mortgage_tax_verdict.
 Open `index.html` in a browser. No build, no dependencies, no network. **Print → A4 portrait** for a PDF.
 
 ```
-node test/verify.mjs      # 64 assertions, no dependencies
+node   test/verify.mjs      # 64 assertions against the rebuilt model
+python3 test/crosscheck.py  # independent second implementation, verifies the PDF
 ```
+
+Two deliberately separate implementations sharing no code, so the audit does not rest on one of them.
+`crosscheck.py` derives every published figure from first principles in Python and confirms all of them;
+`verify.mjs` asserts that `index.html` reproduces them and behaves correctly across scenarios.
 
 ## The prior work is arithmetically sound
 
