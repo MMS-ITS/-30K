@@ -75,8 +75,14 @@ ok('gap flagged as unaccounted', /unaccounted for/.test(H('e_note')));
 ok('$4,771 implausible-premium row shown', /implausible premium/.test(H('e_body')));
 const plausible = (H('e_body').match(/normal TX range/g) || []).length;
 ok('plausible-tax resolutions surfaced', plausible >= 3, `${plausible} rows`);
+ok('finding stated from the report\'s own figures', /As the report stands/.test(H('e_note')));
+ok('consequence stated inside the finding', /Consequence:/.test(H('e_note')));
 set({ ptax: 5772, ins: 1800 });
-ok('reconciles once escrow-implied tax used', /Reconciled/.test(H('e_note')), T('e_gap'));
+ok('notes when current inputs reconcile', /current inputs reconcile/.test(H('e_note')), T('e_gap'));
+ok('finding SURVIVES the corrected scenario', /As the report stands/.test(H('e_note')),
+   'card must not contradict its own headline');
+ok('  and still names the $4,771 gap', /\$4,771/.test(H('e_note')));
+ok('  and still names the resulting loss', /-\$1,539 loss|\$1,539/.test(H('e_note')));
 
 /* ===== 3. the conclusion actually reverses ===== */
 head('3. Resolving the contradiction reverses the report headline');

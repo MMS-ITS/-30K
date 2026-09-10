@@ -60,7 +60,8 @@ td.lbl small{display:block;color:var(--ink3);font-size:11.5px;font-weight:400}
 .note.w{border-color:var(--amber);background:#fffbeb}
 .note.d{border-color:var(--red);background:#fef2f2}
 .note.g{border-color:var(--green);background:#ecfdf5}
-.note b{display:block;margin-bottom:3px}
+.note>b:first-child{display:block;margin-bottom:3px}
+.note b{display:inline}
 ol.iss{padding-left:0;list-style:none;counter-reset:x;margin:0}
 ol.iss li{counter-increment:x;position:relative;padding:12px 0 12px 40px;border-bottom:1px solid var(--line)}
 ol.iss li:last-child{border-bottom:0}
@@ -75,7 +76,10 @@ code{background:#f2f4f7;padding:1px 5px;border-radius:4px;font:12.5px/1.4 ui-mon
 .verdict{background:linear-gradient(135deg,#064e3b,#065f46 55%,#0f766e);color:#fff;border:0}
 .verdict h2{color:#fff}.verdict .hint{color:rgba(255,255,255,.75)}
 .verdict .box{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:15px;margin-bottom:11px}
-.verdict .box b{display:block;font-size:15px;margin-bottom:5px}
+/* Only the box's leading <b> is a heading. Scoping this prevents inline emphasis
+   inside the prose from being forced onto its own line and breaking the sentence. */
+.verdict .box>b:first-child{display:block;font-size:15px;margin-bottom:5px}
+.verdict .box p b{display:inline;font-weight:700}
 .verdict .box p{margin:0;font-size:13.5px;opacity:.94}
 footer{color:var(--ink3);font-size:12px;border-top:1px solid var(--line);padding-top:17px;margin-top:8px}
 .tools{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:19px}
@@ -91,9 +95,24 @@ button:hover{filter:brightness(.97)}
   header{background:#312e81!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:13px 0;margin-bottom:11px}
   .card,.kpi,thead th,.note,.verdict,.badge,.flag,.src,tfoot td,.win{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .card{box-shadow:none;break-inside:avoid;page-break-inside:avoid;margin-bottom:10px;padding:12px}
+  /* Cards taller than one printable page cannot honour break-inside:avoid. Forcing it
+     strands content and emits blank pages, so these are allowed to split and their
+     inner blocks carry the break protection instead. */
+  .card.split{break-inside:auto;page-break-inside:auto}
   .noprint{display:none!important}
+  /* A4 is ~794 CSS px, which trips the 900px mobile collapse and stretches the
+     multi-column cards over extra sparse pages. Restore the intended columns. */
+  .g3{grid-template-columns:repeat(3,1fr)!important}
+  .g2{grid-template-columns:repeat(2,1fr)!important}
+  .kpis{grid-template-columns:repeat(4,1fr)!important}
+  .grid{gap:12px}
+  .f{grid-template-columns:1fr 74px;margin-bottom:5px}
+  .f label{font-size:8.6pt}.f label small{font-size:7.4pt}
+  input[type=number],select{padding:3px 5px;font-size:8.4pt}
+  fieldset{margin-bottom:10px}legend{font-size:7.6pt;padding-bottom:5px;margin-bottom:8px}
   table{font-size:8.4pt}th,td{padding:4px 5px}
-  tr,li,.note,.box{break-inside:avoid;page-break-inside:avoid}
+  tr,li,.note,.box,fieldset,.kpi{break-inside:avoid;page-break-inside:avoid}
+  .card.split>h2{break-after:avoid;page-break-after:avoid}
   h1{font-size:16pt}.card>h2{font-size:12pt}.kpi .v{font-size:13pt}.lg{font-size:16pt}
   .pgbreak{break-before:page;page-break-before:always}
 }
@@ -103,7 +122,8 @@ button:hover{filter:brightness(.97)}
 <header><div class="wrap">
   <h1>The $30,000 Decision — audit and rebuild</h1>
   <div class="sub">Both prior documents were obtained and every figure in them recomputed. The arithmetic is
-    flawless — all 24 headline numbers reproduce to the cent. Three of my initial criticisms were wrong and are
+    flawless — all fourteen audited figures reproduce, several to the cent, confirmed by two independent
+    implementations. Three of my initial criticisms were wrong and are
     withdrawn below. What survives is a contradiction the report contains but never resolves, and two options it
     never modelled.</div>
   <div class="chips">
@@ -135,7 +155,7 @@ button:hover{filter:brightness(.97)}
     <div class="kpi"><div class="k">Reported monthly draft</div><div class="v neu" id="e_draft">—</div><div class="n">from the report, page 2</div></div>
     <div class="kpi"><div class="k">Less contractual P&amp;I</div><div class="v" id="e_pi">—</div><div class="n">computed, not assumed</div></div>
     <div class="kpi"><div class="k">Implied annual escrow</div><div class="v warn" id="e_esc">—</div><div class="n">tax + insurance + fees</div></div>
-    <div class="kpi"><div class="k">Unexplained gap</div><div class="v" id="e_gap">—</div><div class="n">vs your stated tax + insurance</div></div>
+    <div class="kpi"><div class="k">Gap vs your inputs</div><div class="v" id="e_gap">—</div><div class="n" id="e_gapn">the report's own gap is below</div></div>
   </div>
   <div id="e_note"></div>
   <table style="margin-top:14px">
@@ -145,7 +165,7 @@ button:hover{filter:brightness(.97)}
 </div>
 
 <!-- ===================== INPUTS ===================== -->
-<div class="card">
+<div class="card split">
   <h2><span class="bar"></span>Inputs</h2>
   <p class="hint"><span style="border-bottom:2px solid #86efac">Green</span> = disclosed in the prior documents.
      <span style="border-bottom:2px solid var(--amber)">Amber</span> = never supplied, and decisive.
@@ -214,7 +234,7 @@ button:hover{filter:brightness(.97)}
 </div>
 
 <!-- ===================== AUDIT ===================== -->
-<div class="card pgbreak">
+<div class="card">
   <h2><span class="bar g"></span>What is correct in the prior work</h2>
   <p class="hint">Recomputed independently from first principles. Every one matches.</p>
   <table>
@@ -252,7 +272,7 @@ button:hover{filter:brightness(.97)}
   </ol>
 </div>
 
-<div class="card">
+<div class="card split">
   <h2><span class="bar r"></span>What survives — and what only the documents reveal</h2>
   <ol class="iss">
     <li><div class="t">The $2,000 draft contradicts the $2,800 property tax, and nobody resolved it</div>
@@ -342,7 +362,7 @@ button:hover{filter:brightness(.97)}
 </div>
 
 <!-- ===================== LOAN ===================== -->
-<div class="card pgbreak">
+<div class="card">
   <h2><span class="bar t"></span>Loan mechanics</h2>
   <div class="kpis">
     <div class="kpi"><div class="k">Loan amount</div><div class="v neu" id="k_loan">—</div><div class="n" id="k_loann">—</div></div>
@@ -402,7 +422,7 @@ button:hover{filter:brightness(.97)}
 </div>
 
 <!-- ===================== VERDICT ===================== -->
-<div class="card verdict pgbreak">
+<div class="card split verdict pgbreak">
   <h2><span class="bar" style="background:#6ee7b7"></span>Verdict</h2>
   <p class="hint">Recomputed from your inputs. It agrees with the report's direction and disagrees with its execution.</p>
   <div id="v_body"></div>
@@ -484,6 +504,8 @@ function calc(){
   $('e_esc').textContent=$$(escA);
   $('e_gap').textContent=(gap>=0?'+':'')+$$(gap);
   $('e_gap').className='v '+(Math.abs(gap)<600?'pos':'neg');
+  $('e_gapn').textContent=Math.abs(gap)<600?"reconciled — the report's own gap is below"
+                                           :"still unexplained on your figures";
   $('e_body').innerHTML=[1500,1800,2400,3000].map(ins=>{
     const it=escA-ins, p=it/price*100, okp=(p>=1.2&&p<=2.6);
     return `<tr class="${okp?'win':''}"><td class="lbl">Insurance is ${$$(ins)}</td><td><b>${$$(it)}</b></td>
@@ -491,15 +513,31 @@ function calc(){
       :'<span class="badge b-no">no</span>'}</td></tr>`;}).join('')
     +`<tr><td class="lbl">Property tax is ${$$(N('ptax'))} as stated</td><td><b>${$$(escA-N('ptax'))}</b> insurance</td>
       <td>—</td><td>${escA-N('ptax')>3200?'<span class="badge b-no">implausible premium</span>':'<span class="badge b-ok">possible</span>'}</td></tr>`;
-  $('e_note').innerHTML = Math.abs(gap)<600
-    ? `<div class="note g"><b>Reconciled</b> The draft is consistent with your stated tax and insurance to within
-        ${$$(Math.abs(gap))}/year. No contradiction remains.</div>`
-    : `<div class="note d"><b>${$$(Math.abs(gap))} per year is unaccounted for</b>
-        A ${$$(draft)} draft less ${$$(pay)} of P&amp;I leaves ${$$(escM)}/month, or ${$$(escA)}/year, for escrow.
-        Your stated property tax plus insurance totals only ${$$(stated)}. Either the property tax is roughly
-        ${$$(escA-1800)} rather than ${$$(N('ptax'))} — which is ${pc((escA-1800)/price*100)} of price and entirely
-        normal for Texas once a homestead cap and exemption are lost on conversion to a rental — or the premium is
-        ${$$(escA-N('ptax'))}, which is not. <b>Get the escrow breakdown before sending ${$$(lump)}.</b></div>`;
+  /* The finding concerns the *report's* stated figures, so state it from those constants
+     regardless of what the inputs currently hold — otherwise selecting the corrected
+     scenario makes the card report "reconciled" beneath a headline asserting a contradiction. */
+  const R_PTAX=2800, R_OPEX=2800+3800+828, R_DEP=price*0.80/27.5;
+  const r_gap=escA-R_PTAX;
+  const impliedTax=escA-1800;
+  const netAtImplied=N('rent')*12-i12-impliedTax-N('mgmt')-N('hoa')-1800-R_DEP;
+  const asReported=N('rent')*12-i12-R_OPEX-R_DEP;
+  const finding=`<div class="note d"><b>As the report stands, ${$$(r_gap)} per year is unaccounted for</b>
+      Its stated property tax of ${$$(R_PTAX)} leaves ${$$(r_gap)} of the ${$$(escA)} implied escrow to be explained
+      by insurance alone — implausible for a ${$$(price)} rental. Read the other way, an ordinary ${$$(1800)} premium
+      implies property tax of ${$$(impliedTax)}, or ${pc(impliedTax/price*100)} of price, which is entirely normal for
+      Texas once a homestead cap and exemption are lost on conversion to a rental.
+      <b>Consequence:</b> substituting that tax turns the report's
+      ${$$(asReported)} stabilized profit into a <b>${$$(netAtImplied)} loss</b>, and its
+      +${$$(711)} of federal tax into roughly ${$$(Math.round(netAtImplied*comb))}. One document from the servicer
+      settles it.</div>`;
+  $('e_note').innerHTML = finding + (Math.abs(gap)<600
+    ? `<div class="note g"><b>Your current inputs reconcile</b> They agree with the ${$$(draft)} draft to within
+        ${$$(Math.abs(gap))}/year, so the figures below already reflect the corrected position rather than the
+        report's.</div>`
+    : `<div class="note w"><b>Your current inputs also leave ${$$(Math.abs(gap))}/year unexplained</b>
+        A ${$$(draft)} draft less ${$$(pay)} of P&amp;I leaves ${$$(escM)}/month for escrow, against
+        ${$$(stated)} of stated property tax and insurance.
+        <b>Get the escrow breakdown before sending ${$$(lump)}.</b></div>`);
 
   $('k_loan').textContent=$$(loan);
   $('k_loann').textContent=$$(price*N('downpct')/100)+' down ('+N('downpct')+'%)';
@@ -709,8 +747,10 @@ function calc(){
            ${pc((escA-1800)/price*100)} of price, ordinary for Texas once a homestead cap is lost on conversion to a
            rental. Substituting it turns the reported ${'$3,233'} profit into ${$$(netF)} and the reported +$711 of
            tax into ${$$(rentalTaxEffect)}. One document from the servicer settles it.`
-        : `Your entries now reconcile to within ${$$(Math.abs(gap))}/year, so this no longer threatens the
-           conclusion. Keep the statement on file.`}</p></div>`;
+        : `Your entries already carry the corrected property tax, so they reconcile with the ${$$(draft)} draft to
+           within ${$$(Math.abs(gap))}/year and the figures below reflect the corrected position. The finding still
+           stands against the report as written, whose ${$$(R_PTAX)} input leaves ${$$(r_gap)} unexplained — so get
+           the statement and confirm which figure is real before relying on either.`}</p></div>`;
   v+=`<div class="box"><b>3. ${$$(Math.round(A.interest)-Math.round(bInt))} is the right number framed the wrong way</b><p>
       It is undiscounted interest over ${mo(bMonths)}. At ${pc(N('disc'))} the present value is ${$$(pvB)}${Math.abs(N('disc')-N('rate'))<0.01?', exactly zero, because a loan discounted at its own rate is worth its balance':''}.
       The genuine return is ${pc(atc)}, guaranteed — a good reason to prepay, and the report's own page 8 says so.
